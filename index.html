@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>English Verb Exercise</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <style>
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:Arial,Helvetica,sans-serif;
+      background:#f4f5f7;
+      color:#222;
+    }
+    .app{
+      max-width:980px;
+      margin:20px auto;
+      background:#fff;
+      padding:20px;
+      border-radius:12px;
+      box-shadow:0 4px 14px rgba(0,0,0,0.12);
+    }
+    h1{margin:0 0 6px;font-size:24px;}
+    .sub{font-size:13px;color:#666;margin-bottom:18px;}
+    .verb-box{
+      font-size:36px;
+      font-weight:700;
+      text-align:center;
+      margin:18px 0;
+      padding:12px 0;
+      background:#eaf1ff;
+      border-radius:12px;
+    }
+    .timer{
+      font-size:48px;
+      font-weight:700;
+      text-align:center;
+      margin:10px 0;
+      color:#d20000;
+    }
+    .hearing{
+      margin:8px 0;
+      text-align:center;
+      font-size:14px;
+      color:#0073ff;
+    }
+    .detected,.corrected{
+      margin:6px 0;
+      padding:10px;
+      border-radius:10px;
+      font-size:15px;
+    }
+    .detected{background:#fff3c4;color:#6a5300;}
+    .corrected{background:#d4ffe1;color:#0a5b24;}
+    .wrong{background:#ffd8d8;color:#9f0000;}
+    button{
+      border:none;
+      background:#0056ff;
+      color:#fff;
+      padding:10px 20px;
+      border-radius:10px;
+      font-size:14px;
+      cursor:pointer;
+      margin:4px;
+    }
+    button:active{transform:translateY(1px);}
+    .row-center{text-align:center;margin:12px 0;}
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <h1>English Verb Exercise</h1>
+  <div class="sub">Say sentences as fast as you can. No thinking — mouth only.</div>
+
+  <div id="verb" class="verb-box">Loading…</div>
+  <div id="timer" class="timer">3</div>
+  <div id="hearing" class="hearing"></div>
+
+  <div id="det" class="detected" style="display:none;"></div>
+  <div id="cor" class="corrected" style="display:none;"></div>
+
+  <div class="row-center">
+    <button onclick="resetLoop()">Restart</button>
+    <button onclick="manualNext()">Skip</button>
+  </div>
+</div>
+
+<script>
+const verbs=[
+"run","eat","go","see","make","take","speak","read","write","live",
+"play","come","know","find","feel","think","work","give","open","close",
+"start","stop","drive","ask","call","help","wait","try","learn","choose"
+];
+
+let currentVerb="";
+let timeLeft=3;
+let recognition=null;
+let listening=false;
+
+function pickVerb(){
+  currentVerb = verbs[Math.floor(Math.random()*verbs.length)];
+  document.getElementById("verb").innerText = currentVerb;
+}
+
+function beCorrect(sentence){
+  const target = `I ${currentVerb} every day`;
+  return sentence.toLowerCase().trim() === target.toLowerCase().trim();
+}
+
+function startSpeech(){
+  try{
+    recognition = new (window.SpeechRecognition||window.webkitSpeechRecognition)();
+  }catch(e){
+    document.getElementById("hearing").innerText="Speech recognition unsupported.";
+    return;
+  }
+  recognition.lang="en-US";
+  recognition.interimResults=false;
+  recognition.continuous=false;
+
+  recognition.onstart = ()=>{listening=true;document.getElementById("hearing").innerText="Listening…";};
+  recognition.onend = ()=>{listening=false;};
+  recognition.onerror = ()=>{document.getElementById("hearing").innerText="Error";};
+
+  recognition.onresult = (e)=>{
+    const sentence = e.results[0][0].transcript;
+    const detBox = document.getElementById("det");
+    const corBox = document.getElementById("cor");
+    detBox.style.display="block";
+    detBox.innerText = "You said: " + sentence;
+
+    const target = `I ${currentVerb} every day`;
+    if(beCorrect(sentence)){
+      corBox.style.display="block";
+      corBox.className="corrected";
+      corBox.innerText="Correct!";
+    }else{
+      corBox.style.display="block";
+      corBox.className="corrected wrong";
+      corBox.innerText="Correct sentence: " + target;
+    }
+  };
+  recognition.start();
+}
+
+function loop(){
+  const timer=document.getElementById("timer");
+  timer.innerText=timeLeft;
+  if(timeLeft===3){
+    pickVerb();
+    document.getElementById("det").style.display="none";
+    document.getElementById("cor").style.display="none";
+  }
+  if(timeLeft===1 && !listening){ startSpeech(); }
+  timeLeft--;
+  if(timeLeft<0){
+    timeLeft=3;
+    setTimeout(loop,10);
+  }else{
+    setTimeout(loop,1000);
+  }
+}
+
+function resetLoop(){
+  timeLeft=3;
+}
+function manualNext(){
+  timeLeft=3;
+}
+
+loop();
+</script>
+</body>
+</html>
