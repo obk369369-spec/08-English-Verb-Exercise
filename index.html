@@ -1,175 +1,1060 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>English Verb Exercise</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>8번 도구 · 동사 활용 도구 · WIC 기본 연습 모듈</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    *{box-sizing:border-box;}
-    body{
-      margin:0;
-      font-family:Arial,Helvetica,sans-serif;
-      background:#f4f5f7;
-      color:#222;
+    :root {
+      --bg: #f5f7fb;
+      --bg-alt: #ffffff;
+      --accent: #2a6ee8;
+      --accent-soft: #e1ebff;
+      --border: #d0d7e2;
+      --text-main: #1f2933;
+      --text-muted: #6b7280;
+      --danger: #d7263d;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --shadow-soft: 0 10px 25px rgba(15, 23, 42, 0.08);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
-    .app{
-      max-width:980px;
-      margin:20px auto;
-      background:#fff;
-      padding:20px;
-      border-radius:12px;
-      box-shadow:0 4px 14px rgba(0,0,0,0.12);
+
+    * {
+      box-sizing: border-box;
     }
-    h1{margin:0 0 6px;font-size:24px;}
-    .sub{font-size:13px;color:#666;margin-bottom:18px;}
-    .verb-box{
-      font-size:36px;
-      font-weight:700;
-      text-align:center;
-      margin:18px 0;
-      padding:12px 0;
-      background:#eaf1ff;
-      border-radius:12px;
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #eef2ff 0, #f5f7fb 45%, #f9fafb 100%);
+      color: var(--text-main);
     }
-    .timer{
-      font-size:48px;
-      font-weight:700;
-      text-align:center;
-      margin:10px 0;
-      color:#d20000;
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 32px 16px;
     }
-    .hearing{
-      margin:8px 0;
-      text-align:center;
-      font-size:14px;
-      color:#0073ff;
+
+    .app-shell {
+      width: 100%;
+      max-width: 1200px;
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 20px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      padding: 20px 24px 24px;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
-    .detected,.corrected{
-      margin:6px 0;
-      padding:10px;
-      border-radius:10px;
-      font-size:15px;
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
     }
-    .detected{background:#fff3c4;color:#6a5300;}
-    .corrected{background:#d4ffe1;color:#0a5b24;}
-    .wrong{background:#ffd8d8;color:#9f0000;}
-    button{
-      border:none;
-      background:#0056ff;
-      color:#fff;
-      padding:10px 20px;
-      border-radius:10px;
-      font-size:14px;
-      cursor:pointer;
-      margin:4px;
+
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
-    button:active{transform:translateY(1px);}
-    .row-center{text-align:center;margin:12px 0;}
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .title-pill {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+    }
+
+    h1 {
+      font-size: 18px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    h1 span.sub {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .meta-row {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .meta-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: #9ca3af;
+    }
+
+    .meta-tag {
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      font-size: 10px;
+    }
+
+    .badge-note {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .status-pill {
+      font-size: 11px;
+      color: #059669;
+      background: #ecfdf3;
+      border-radius: 999px;
+      padding: 4px 9px;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+      gap: 14px;
+    }
+
+    @media (max-width: 960px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      body {
+        padding: 12px;
+      }
+      .app-shell {
+        padding: 16px;
+      }
+    }
+
+    .panel {
+      background: var(--bg-alt);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(203, 213, 225, 0.9);
+      padding: 14px 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-title {
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .panel-title small {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .panel-chip {
+      font-size: 10px;
+      padding: 3px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      color: var(--text-muted);
+    }
+
+    .panel-body {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    label span.req {
+      color: var(--danger);
+      margin-left: 2px;
+    }
+
+    .hint {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    textarea,
+    input,
+    select {
+      font-family: inherit;
+      font-size: 13px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      padding: 7px 9px;
+      outline: none;
+      transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+      background: #f9fafb;
+      resize: vertical;
+      min-height: 32px;
+    }
+
+    textarea:focus,
+    input:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
+      background: #ffffff;
+    }
+
+    textarea {
+      min-height: 80px;
+      font-family: var(--mono);
+      line-height: 1.5;
+    }
+
+    .mono-input {
+      font-family: var(--mono);
+    }
+
+    button {
+      font-family: inherit;
+      font-size: 13px;
+      border-radius: 999px;
+      border: none;
+      padding: 7px 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: transform 0.08s ease, box-shadow 0.1s ease, background 0.1s ease;
+    }
+
+    button:active {
+      transform: translateY(1px);
+      box-shadow: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #ffffff;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #1d4ed8, #1d4ed8);
+    }
+
+    .btn-ghost {
+      background: #eef2ff;
+      color: #1f2937;
+      border: 1px solid rgba(129, 140, 248, 0.5);
+    }
+
+    .btn-ghost:hover {
+      background: #e0e7ff;
+    }
+
+    .btn-soft {
+      background: #f3f4ff;
+      color: #374151;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+    }
+
+    .btn-soft:hover {
+      background: #e5e7ff;
+    }
+
+    .btn-danger-soft {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid rgba(248, 113, 113, 0.7);
+    }
+
+    .btn-danger-soft:hover {
+      background: #fee2e2;
+    }
+
+    .chip-inline {
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+
+    .pill-small {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      color: #4b5563;
+    }
+
+    .result-box {
+      background: #0b1120;
+      color: #e5e7eb;
+      font-family: var(--mono);
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 12px;
+      max-height: 220px;
+      overflow: auto;
+      border: 1px solid rgba(15, 23, 42, 0.8);
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.6);
+      position: relative;
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .result-body {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .badge-ok {
+      color: #22c55e;
+    }
+
+    .badge-warn {
+      color: #facc15;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .status-row span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .log-area {
+      font-family: var(--mono);
+      font-size: 11px;
+      min-height: 90px;
+      background: #f9fafb;
+    }
+
+    .footer-note {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    .footer-note strong {
+      color: var(--accent);
+    }
+
+    .pill-mini {
+      font-size: 9px;
+      padding: 2px 5px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      color: #4b5563;
+    }
   </style>
 </head>
 <body>
+  <div class="app-shell">
+    <header>
+      <div class="title-block">
+        <div class="title-row">
+          <span class="title-pill">8번 도구 · Verb Practice</span>
+          <span class="status-pill">Local-only · Safe DOM · v1.0</span>
+        </div>
+        <h1>
+          동사 활용 도구
+          <span class="sub">코딩 기초·영업 메일용 기초 문장 연습 모듈</span>
+        </h1>
+        <div class="meta-row">
+          <span>※ 이 화면에 보이는 기능만 동작합니다. (저장: 브라우저 <strong>localStorage</strong>)</span>
+          <span class="meta-dot"></span>
+          <span class="meta-tag">현재형·기초 패턴 전용</span>
+          <span class="meta-tag">서버 통신 · 타이머 없음</span>
+        </div>
+      </div>
+      <div>
+        <div class="badge-note">기본 패턴 3문장 세트: 평서 / 부정 / 의문 자동 생성</div>
+      </div>
+    </header>
 
-<div class="app">
-  <h1>English Verb Exercise</h1>
-  <div class="sub">Say sentences as fast as you can. No thinking — mouth only.</div>
+    <div class="layout">
+      <!-- 왼쪽: 동사 목록 & 기본 옵션 -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            ① 동사 / 표현 목록
+            <small>자주 쓰는 동사·구문을 한 번에 관리</small>
+          </div>
+          <span class="panel-chip">Local preset</span>
+        </div>
+        <div class="panel-body">
+          <div class="field-group">
+            <label for="verbList">
+              동사 / 표현 목록
+              <span class="req">*</span>
+            </label>
+            <textarea id="verbList" class="mono-input" placeholder="go
+make
+take
+contact
+follow up
+request a quote"></textarea>
+            <div class="hint">
+              · 한 줄에 하나씩 적습니다. 기본 형식(원형)으로 입력해 주세요. <br />
+              · 예: <span class="chip-inline">contact</span>, <span class="chip-inline">follow up</span>, <span class="chip-inline">request a quote</span>
+            </div>
+          </div>
 
-  <div id="verb" class="verb-box">Loading…</div>
-  <div id="timer" class="timer">3</div>
-  <div id="hearing" class="hearing"></div>
+          <div class="field-group">
+            <div class="field-row">
+              <div style="flex: 1 1 140px;">
+                <label for="verbSelect">연습에 쓸 동사 선택<span class="req">*</span></label>
+                <select id="verbSelect">
+                  <option value="">동사를 선택해 주세요.</option>
+                </select>
+              </div>
+              <button id="applyVerbListBtn" class="btn-soft" type="button">
+                목록 적용
+              </button>
+            </div>
+            <div class="hint">
+              · 목록을 수정한 뒤 <strong>목록 적용</strong>을 누르면 위에서 아래 순서대로 다시 채워집니다. <br />
+              · 목록이 비어 있으면 기본 예시가 자동으로 사용됩니다.
+            </div>
+          </div>
 
-  <div id="det" class="detected" style="display:none;"></div>
-  <div id="cor" class="corrected" style="display:none;"></div>
+          <div class="field-group">
+            <label>기본 패턴 (현재 버전)</label>
+            <div class="field-row">
+              <span class="chip-inline">시제: 현재형 (Simple Present)</span>
+              <span class="chip-inline">형태: 긍정 / 부정 / 의문</span>
+            </div>
+            <div class="hint">
+              · 시제 확장은 나중에 블록 단위로 추가 예정입니다. <br />
+              · 지금은 <strong>현재형 기초 패턴</strong>만 안정적으로 사용합니다.
+            </div>
+          </div>
+        </div>
+      </section>
 
-  <div class="row-center">
-    <button onclick="resetLoop()">Restart</button>
-    <button onclick="manualNext()">Skip</button>
+      <!-- 오른쪽: 문장 생성 & 결과 -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            ② 문장 생성 & 연습
+            <small>주어 · 목적어를 정하고 예문 3개 자동 생성</small>
+          </div>
+          <span class="panel-chip">Generate & Practice</span>
+        </div>
+        <div class="panel-body">
+          <div class="field-row">
+            <div class="field-group" style="flex: 0 0 140px;">
+              <label for="subjectSelect">
+                주어 (Subject)
+                <span class="req">*</span>
+              </label>
+              <select id="subjectSelect">
+                <option value="I">I</option>
+                <option value="You">You</option>
+                <option value="We">We</option>
+                <option value="They">They</option>
+                <option value="He">He</option>
+                <option value="She">She</option>
+                <option value="It">It</option>
+              </select>
+            </div>
+            <div class="field-group" style="flex: 1 1 160px;">
+              <label for="objectInput">
+                목적어 / 상황 (Object / Context)
+              </label>
+              <input
+                id="objectInput"
+                type="text"
+                class="mono-input"
+                placeholder="to check the latest market report"
+              />
+              <div class="hint">
+                · 비워 두어도 됩니다. 예: <span class="chip-inline">the report</span>, <span class="chip-inline">our new project</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="noteInput">한국어 노트 (의미 메모)</label>
+            <textarea
+              id="noteInput"
+              placeholder="예: 후지경제 보고서 문의할 때 쓰는 기본 문장 세트"
+            ></textarea>
+          </div>
+
+          <div class="field-row" style="justify-content: space-between; align-items: center;">
+            <div class="field-row">
+              <button id="generateBtn" class="btn-primary" type="button">
+                예문 3개 자동 생성
+              </button>
+              <button id="copyResultBtn" class="btn-ghost" type="button">
+                결과 복사
+              </button>
+            </div>
+            <div class="status-row">
+              <span>
+                <span class="pill-mini">문장 길이</span>
+                <span id="lengthInfo">0 chars · 0 lines</span>
+              </span>
+              <span>
+                <span class="pill-mini">연습 세트</span>
+                <span id="setInfo">미생성</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>실행 결과 (Result)</label>
+            <div class="result-box" id="resultBox">
+              <div class="result-header">
+                <span>출력 내용 · Verb practice set</span>
+                <span id="resultStatus" class="badge-warn">대기 중</span>
+              </div>
+              <div id="resultBody" class="result-body">
+예문이 아직 없습니다.
+
+① 왼쪽에서 동사/표현 목록을 작성하고 &lt;목록 적용&gt; 버튼을 누릅니다.
+② 연습에 사용할 동사와 주어, 상황을 선택합니다.
+③ &lt;예문 3개 자동 생성&gt; 버튼을 누르면 이곳에 문장이 만들어집니다.
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="logArea">
+              연습 로그 (Log)
+              <span class="pill-small">최근 연습이 위에 추가됩니다.</span>
+            </label>
+            <textarea
+              id="logArea"
+              class="log-area"
+              placeholder="[로그] 예문을 생성하면 이곳에 누적됩니다."
+            ></textarea>
+          </div>
+
+          <div class="field-row" style="justify-content: space-between; align-items: center;">
+            <div class="field-row">
+              <button id="clearResultBtn" class="btn-soft" type="button">
+                결과만 지우기
+              </button>
+              <button id="clearAllBtn" class="btn-danger-soft" type="button">
+                전체 초기화
+              </button>
+            </div>
+            <div class="footer-note">
+              동사 목록 · 선택 · 결과 · 로그는 모두 이 브라우저의
+              <strong>localStorage</strong>에 저장됩니다.
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="status-row" style="margin-top: 4px;">
+      <span>
+        <span class="pill-mini">저장 상태</span>
+        <span id="saveStatus">localStorage · 로드 대기</span>
+      </span>
+      <span>
+        <span class="pill-mini">실행 규칙</span>
+        <span>서버 통신 없음 · 이 화면에 보이는 입력창과 버튼만 동작</span>
+      </span>
+    </div>
   </div>
-</div>
 
-<script>
-const verbs=[
-"run","eat","go","see","make","take","speak","read","write","live",
-"play","come","know","find","feel","think","work","give","open","close",
-"start","stop","drive","ask","call","help","wait","try","learn","choose"
-];
+  <script>
+    (function () {
+      "use strict";
 
-let currentVerb="";
-let timeLeft=3;
-let recognition=null;
-let listening=false;
+      const STORAGE_KEY = "wic-verb-tool-v1";
 
-function pickVerb(){
-  currentVerb = verbs[Math.floor(Math.random()*verbs.length)];
-  document.getElementById("verb").innerText = currentVerb;
-}
+      const verbListEl = document.getElementById("verbList");
+      const verbSelectEl = document.getElementById("verbSelect");
+      const applyVerbListBtn = document.getElementById("applyVerbListBtn");
+      const subjectSelectEl = document.getElementById("subjectSelect");
+      const objectInputEl = document.getElementById("objectInput");
+      const noteInputEl = document.getElementById("noteInput");
+      const generateBtn = document.getElementById("generateBtn");
+      const copyResultBtn = document.getElementById("copyResultBtn");
+      const clearResultBtn = document.getElementById("clearResultBtn");
+      const clearAllBtn = document.getElementById("clearAllBtn");
+      const resultBodyEl = document.getElementById("resultBody");
+      const resultStatusEl = document.getElementById("resultStatus");
+      const logAreaEl = document.getElementById("logArea");
+      const saveStatusEl = document.getElementById("saveStatus");
+      const lengthInfoEl = document.getElementById("lengthInfo");
+      const setInfoEl = document.getElementById("setInfo");
 
-function beCorrect(sentence){
-  const target = `I ${currentVerb} every day`;
-  return sentence.toLowerCase().trim() === target.toLowerCase().trim();
-}
+      function nowTimeString() {
+        const d = new Date();
+        const hh = String(d.getHours()).padStart(2, "0");
+        const mm = String(d.getMinutes()).padStart(2, "0");
+        const ss = String(d.getSeconds()).padStart(2, "0");
+        return hh + ":" + mm + ":" + ss;
+      }
 
-function startSpeech(){
-  try{
-    recognition = new (window.SpeechRecognition||window.webkitSpeechRecognition)();
-  }catch(e){
-    document.getElementById("hearing").innerText="Speech recognition unsupported.";
-    return;
-  }
-  recognition.lang="en-US";
-  recognition.interimResults=false;
-  recognition.continuous=false;
+      function updateSaveStatus(message) {
+        if (!saveStatusEl) return;
+        const time = nowTimeString();
+        saveStatusEl.textContent = message
+          ? message + " · " + time
+          : "localStorage · " + time;
+      }
 
-  recognition.onstart = ()=>{listening=true;document.getElementById("hearing").innerText="Listening…";};
-  recognition.onend = ()=>{listening=false;};
-  recognition.onerror = ()=>{document.getElementById("hearing").innerText="Error";};
+      function getTextLengthInfo(text) {
+        const chars = text.length;
+        const lines = text === "" ? 0 : text.split(/\r?\n/).length;
+        return chars + " chars · " + lines + " lines";
+      }
 
-  recognition.onresult = (e)=>{
-    const sentence = e.results[0][0].transcript;
-    const detBox = document.getElementById("det");
-    const corBox = document.getElementById("cor");
-    detBox.style.display="block";
-    detBox.innerText = "You said: " + sentence;
+      function updateLengthInfo() {
+        const text = resultBodyEl ? resultBodyEl.textContent || resultBodyEl.innerText || "" : "";
+        if (lengthInfoEl) {
+          lengthInfoEl.textContent = getTextLengthInfo(text.trim());
+        }
+      }
 
-    const target = `I ${currentVerb} every day`;
-    if(beCorrect(sentence)){
-      corBox.style.display="block";
-      corBox.className="corrected";
-      corBox.innerText="Correct!";
-    }else{
-      corBox.style.display="block";
-      corBox.className="corrected wrong";
-      corBox.innerText="Correct sentence: " + target;
-    }
-  };
-  recognition.start();
-}
+      function safeParse(json) {
+        try {
+          return JSON.parse(json);
+        } catch (e) {
+          return null;
+        }
+      }
 
-function loop(){
-  const timer=document.getElementById("timer");
-  timer.innerText=timeLeft;
-  if(timeLeft===3){
-    pickVerb();
-    document.getElementById("det").style.display="none";
-    document.getElementById("cor").style.display="none";
-  }
-  if(timeLeft===1 && !listening){ startSpeech(); }
-  timeLeft--;
-  if(timeLeft<0){
-    timeLeft=3;
-    setTimeout(loop,10);
-  }else{
-    setTimeout(loop,1000);
-  }
-}
+      function saveState() {
+        const state = {
+          verbList: verbListEl ? verbListEl.value : "",
+          selectedVerb: verbSelectEl ? verbSelectEl.value : "",
+          subject: subjectSelectEl ? subjectSelectEl.value : "I",
+          objectText: objectInputEl ? objectInputEl.value : "",
+          noteText: noteInputEl ? noteInputEl.value : "",
+          resultText: resultBodyEl ? resultBodyEl.textContent : "",
+          logText: logAreaEl ? logAreaEl.value : "",
+          setInfo: setInfoEl ? setInfoEl.textContent : ""
+        };
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          updateSaveStatus("자동 저장 완료");
+        } catch (e) {
+          updateSaveStatus("저장 실패 (용량 초과 가능)");
+        }
+      }
 
-function resetLoop(){
-  timeLeft=3;
-}
-function manualNext(){
-  timeLeft=3;
-}
+      function applyState(state) {
+        if (!state || typeof state !== "object") return;
+        if (verbListEl && typeof state.verbList === "string") {
+          verbListEl.value = state.verbList;
+        }
+        buildVerbSelectFromList();
+        if (verbSelectEl && typeof state.selectedVerb === "string") {
+          if ([...verbSelectEl.options].some(opt => opt.value === state.selectedVerb)) {
+            verbSelectEl.value = state.selectedVerb;
+          }
+        }
+        if (subjectSelectEl && typeof state.subject === "string") {
+          subjectSelectEl.value = state.subject;
+        }
+        if (objectInputEl && typeof state.objectText === "string") {
+          objectInputEl.value = state.objectText;
+        }
+        if (noteInputEl && typeof state.noteText === "string") {
+          noteInputEl.value = state.noteText;
+        }
+        if (resultBodyEl && typeof state.resultText === "string" && state.resultText.trim() !== "") {
+          resultBodyEl.textContent = state.resultText;
+          resultStatusEl.textContent = "이전 결과 복원";
+          resultStatusEl.className = "badge-ok";
+        }
+        if (logAreaEl && typeof state.logText === "string") {
+          logAreaEl.value = state.logText;
+        }
+        if (setInfoEl && typeof state.setInfo === "string" && state.setInfo.trim() !== "") {
+          setInfoEl.textContent = state.setInfo;
+        }
+        updateLengthInfo();
+      }
 
-loop();
-</script>
+      function loadState() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (!stored) {
+          setDefaultVerbList();
+          buildVerbSelectFromList();
+          updateSaveStatus("초기 상태 로드");
+          updateLengthInfo();
+          return;
+        }
+        const state = safeParse(stored);
+        if (!state) {
+          setDefaultVerbList();
+          buildVerbSelectFromList();
+          updateSaveStatus("초기화 (파싱 실패)");
+          updateLengthInfo();
+          return;
+        }
+        applyState(state);
+        updateSaveStatus("localStorage · 로드 완료");
+      }
+
+      function setDefaultVerbList() {
+        if (!verbListEl) return;
+        if (verbListEl.value.trim() !== "") return;
+        const defaultList = [
+          "contact",
+          "follow up",
+          "request",
+          "check",
+          "confirm",
+          "support",
+          "analyze"
+        ].join("\n");
+        verbListEl.value = defaultList;
+      }
+
+      function getVerbLines() {
+        const raw = verbListEl ? verbListEl.value : "";
+        const lines = String(raw)
+          .split(/\r?\n/)
+          .map(function (line) {
+            return line.trim();
+          })
+          .filter(function (line) {
+            return line.length > 0;
+          });
+        return lines;
+      }
+
+      function buildVerbSelectFromList() {
+        if (!verbSelectEl) return;
+        const list = getVerbLines();
+        const targetList = list.length > 0 ? list : [
+          "contact",
+          "follow up",
+          "request",
+          "check"
+        ];
+        while (verbSelectEl.firstChild) {
+          verbSelectEl.removeChild(verbSelectEl.firstChild);
+        }
+        const placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.textContent = "동사를 선택해 주세요.";
+        verbSelectEl.appendChild(placeholder);
+
+        targetList.forEach(function (verb) {
+          const opt = document.createElement("option");
+          opt.value = verb;
+          opt.textContent = verb;
+          verbSelectEl.appendChild(opt);
+        });
+      }
+
+      function isThirdPerson(subject) {
+        return subject === "He" || subject === "She" || subject === "It";
+      }
+
+      function conjugatePresentThirdPerson(verb) {
+        const v = verb.trim();
+        if (v.length === 0) return v;
+        const lower = v.toLowerCase();
+        const last = lower.slice(-1);
+        const last2 = lower.slice(-2);
+
+        if (/[sxz]/.test(last) || last2 === "sh" || last2 === "ch" || last === "o") {
+          return v + "es";
+        }
+
+        const vowels = ["a", "e", "i", "o", "u"];
+        const beforeLast = lower.slice(-2, -1);
+        if (last === "y" && vowels.indexOf(beforeLast) === -1) {
+          return v.slice(0, -1) + "ies";
+        }
+
+        return v + "s";
+      }
+
+      function normalizeSubjectForQuestion(subject) {
+        if (subject === "I") return "I";
+        return subject.toLowerCase();
+      }
+
+      function buildSentenceSet(subject, verb, objectText) {
+        const trimmedVerb = verb.trim();
+        const trimmedObj = objectText.trim();
+        const hasObj = trimmedObj.length > 0;
+        const objPart = hasObj ? " " + trimmedObj : "";
+        const third = isThirdPerson(subject);
+
+        const mainVerb = third ? conjugatePresentThirdPerson(trimmedVerb) : trimmedVerb;
+        const negAux = third ? "does not" : "do not";
+        const qAux = third ? "Does" : "Do";
+
+        const positive = subject + " " + mainVerb + objPart + ".";
+        const negative = subject + " " + negAux + " " + trimmedVerb + objPart + ".";
+        const questionSubj = normalizeSubjectForQuestion(subject);
+        const question = qAux + " " + questionSubj + " " + trimmedVerb + objPart + "?";
+
+        return {
+          positive: positive,
+          negative: negative,
+          question: question
+        };
+      }
+
+      function generateExamples() {
+        const subject = subjectSelectEl ? subjectSelectEl.value : "I";
+        const selectedVerb = verbSelectEl ? verbSelectEl.value : "";
+        const objectText = objectInputEl ? objectInputEl.value : "";
+        const noteText = noteInputEl ? noteInputEl.value : "";
+
+        if (!selectedVerb || selectedVerb.trim() === "") {
+          resultBodyEl.textContent = "동사를 먼저 선택해 주세요. (왼쪽 목록을 작성한 뒤, \"목록 적용\" 버튼을 누르고 동사를 선택합니다.)";
+          resultStatusEl.textContent = "동사 미선택";
+          resultStatusEl.className = "badge-warn";
+          updateLengthInfo();
+          saveState();
+          return;
+        }
+
+        const set = buildSentenceSet(subject, selectedVerb, objectText);
+        const lines = [];
+        lines.push("[Verb Practice Set]");
+        lines.push("Subject : " + subject);
+        lines.push("Verb    : " + selectedVerb);
+        if (objectText.trim() !== "") {
+          lines.push("Object  : " + objectText.trim());
+        }
+        if (noteText.trim() !== "") {
+          lines.push("Note    : " + noteText.trim());
+        }
+        lines.push("");
+        lines.push("[1] Positive (긍정문)");
+        lines.push("  " + set.positive);
+        lines.push("");
+        lines.push("[2] Negative (부정문)");
+        lines.push("  " + set.negative);
+        lines.push("");
+        lines.push("[3] Question (의문문)");
+        lines.push("  " + set.question);
+
+        const resultText = lines.join("\n");
+        resultBodyEl.textContent = resultText;
+        resultStatusEl.textContent = "생성 완료";
+        resultStatusEl.className = "badge-ok";
+        updateLengthInfo();
+
+        const time = nowTimeString();
+        const logLines = [];
+        logLines.push("[" + time + "] Subject: " + subject + " | Verb: " + selectedVerb);
+        if (objectText.trim() !== "") {
+          logLines.push("Object : " + objectText.trim());
+        }
+        logLines.push("  1) " + set.positive);
+        logLines.push("  2) " + set.negative);
+        logLines.push("  3) " + set.question);
+        logLines.push("");
+
+        const newEntry = logLines.join("\n");
+        const existingLog = logAreaEl.value.trim();
+        logAreaEl.value = newEntry + (existingLog ? "\n" + existingLog : "");
+
+        if (setInfoEl) {
+          setInfoEl.textContent = "최근 생성 세트 · " + time;
+        }
+
+        saveState();
+      }
+
+      function copyResult() {
+        const text = resultBodyEl ? (resultBodyEl.textContent || "").trim() : "";
+        if (!text) {
+          resultStatusEl.textContent = "복사할 결과 없음";
+          resultStatusEl.className = "badge-warn";
+          return;
+        }
+        if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(
+            function () {
+              resultStatusEl.textContent = "클립보드 복사 완료";
+              resultStatusEl.className = "badge-ok";
+            },
+            function () {
+              resultStatusEl.textContent = "복사 실패 (브라우저 제한)";
+              resultStatusEl.className = "badge-warn";
+            }
+          );
+        } else {
+          resultStatusEl.textContent = "복사 기능을 사용할 수 없습니다.";
+          resultStatusEl.className = "badge-warn";
+        }
+      }
+
+      function clearResultOnly() {
+        resultBodyEl.textContent =
+          "예문이 아직 없습니다.\n\n① 왼쪽에서 동사/표현 목록을 작성하고 <목록 적용> 버튼을 누릅니다.\n② 연습에 사용할 동사와 주어, 상황을 선택합니다.\n③ <예문 3개 자동 생성> 버튼을 누르면 이곳에 문장이 만들어집니다.";
+        resultStatusEl.textContent = "결과 영역 초기화";
+        resultStatusEl.className = "badge-warn";
+        if (setInfoEl) {
+          setInfoEl.textContent = "미생성";
+        }
+        updateLengthInfo();
+        saveState();
+      }
+
+      function clearAll() {
+        if (!window.confirm("동사 목록, 선택, 결과, 로그를 모두 초기화할까요?")) {
+          return;
+        }
+        if (verbListEl) verbListEl.value = "";
+        setDefaultVerbList();
+        buildVerbSelectFromList();
+        if (verbSelectEl) verbSelectEl.value = "";
+        if (subjectSelectEl) subjectSelectEl.value = "I";
+        if (objectInputEl) objectInputEl.value = "";
+        if (noteInputEl) noteInputEl.value = "";
+        if (logAreaEl) logAreaEl.value = "";
+        clearResultOnly();
+        try {
+          localStorage.removeItem(STORAGE_KEY);
+        } catch (e) {
+          /* ignore */
+        }
+        updateSaveStatus("전체 초기화 완료");
+      }
+
+      function handleApplyVerbList() {
+        buildVerbSelectFromList();
+        if (verbSelectEl && verbSelectEl.options.length > 1) {
+          verbSelectEl.selectedIndex = 1;
+        }
+        saveState();
+      }
+
+      function attachEvents() {
+        if (applyVerbListBtn) {
+          applyVerbListBtn.addEventListener("click", handleApplyVerbList);
+        }
+        if (verbListEl) {
+          verbListEl.addEventListener("blur", function () {
+            saveState();
+          });
+        }
+        if (verbSelectEl) {
+          verbSelectEl.addEventListener("change", function () {
+            saveState();
+          });
+        }
+        if (subjectSelectEl) {
+          subjectSelectEl.addEventListener("change", function () {
+            saveState();
+          });
+        }
+        if (objectInputEl) {
+          objectInputEl.addEventListener("input", function () {
+            saveState();
+          });
+        }
+        if (noteInputEl) {
+          noteInputEl.addEventListener("input", function () {
+            saveState();
+          });
+        }
+        if (generateBtn) {
+          generateBtn.addEventListener("click", generateExamples);
+        }
+        if (copyResultBtn) {
+          copyResultBtn.addEventListener("click", copyResult);
+        }
+        if (clearResultBtn) {
+          clearResultBtn.addEventListener("click", clearResultOnly);
+        }
+        if (clearAllBtn) {
+          clearAllBtn.addEventListener("click", clearAll);
+        }
+        if (logAreaEl) {
+          logAreaEl.addEventListener("input", function () {
+            saveState();
+          });
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        setDefaultVerbList();
+        buildVerbSelectFromList();
+        loadState();
+        attachEvents();
+        updateLengthInfo();
+      });
+    })();
+  </script>
 </body>
 </html>
