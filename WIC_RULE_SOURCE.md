@@ -1,4 +1,10 @@
 # WIC RULE SOURCE
-운영 규칙 원본은 `obk369369-spec/20-operational-manual-viewer/WIC_GLOBAL_OPERATING_RULES.md` 하나만 사용한다.
+
 도구번호: 8
-로컬 규칙 복제본·버전본·패치본을 새로 만들지 않는다. 중앙 단일 원본 최신 규칙을 우선한다.
+
+운영 규칙은 두 층으로 사용한다.
+1. WIC 공통 운영원본: `obk369369-spec/20-operational-manual-viewer/WIC_GLOBAL_OPERATING_RULES.md`
+2. TOOL008 전용 원본: `TOOL008_MASTER.md`
+
+공통 규칙을 TOOL008_MASTER에 중복 복제하지 않는다. TOOL008_MASTER에는 8번 도구 고유 규칙만 유지한다.
+같은 범위에서 충돌하면 더 최신의 명시적 사용자 지시를 우선한다.
