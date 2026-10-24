@@ -1105,7 +1105,7 @@ const objects={help:'my friend',go:'to school',make:'dinner',take:'a break',work
 let current=null,deadline=0,ticker=null,previous=-1;
 function save(){try{localStorage.setItem(KEY,JSON.stringify(stats));}catch(e){}}
 function render(){ $('drillStats').textContent='응답 '+stats.attempts+'회 · 정확 '+stats.correct+'회 · 시간 초과 '+stats.late+'회';}
-function norm(s){return s.toLowerCase().replace(/[^a-z ]/g,' ').replace(/\\s+/g,' ').trim().replace(/\\bdo not\\b/g,"don't").replace(/\\bdid not\\b/g,"didn't");}
+function norm(s){return s.toLowerCase().replace(/[^a-z ]/g,' ').replace(/\s+/g,' ').trim().replace(/\bdo not\b/g,"don't").replace(/\bdid not\b/g,"didn't");}
 function build(t,v){const f=forms[v],obj=objects[v];return t.replaceAll('{base}',f[0]).replaceAll('{past}',f[1]).replaceAll('{pp}',f[2]).replaceAll('{ing}',f[3]).replaceAll('my friend',obj);}
 function speak(s){if(!('speechSynthesis'in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(s);u.lang='en-US';u.rate=.9;window.speechSynthesis.speak(u);}
 function next(){
