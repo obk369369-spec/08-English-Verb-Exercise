@@ -1056,5 +1056,96 @@ request a quote"></textarea>
       });
     })();
   </script>
+
+<section id="speakingLab" class="panel" style="margin-top:16px" aria-label="즉시 말하기 훈련">
+ <h2>음성 즉답 훈련 · 베타</h2>
+ <p>영어 지시를 듣고 문장을 즉시 말하세요. 마이크가 없으면 직접 입력할 수 있습니다. 음성 인식은 브라우저 지원이 필요합니다.</p>
+ <div class="field-row">
+  <label>동사 <select id="drillVerb"><option>help</option><option>go</option><option>make</option><option>take</option><option>work</option></select></label>
+  <label>응답 제한 <select id="drillLimit"><option value="5">5초</option><option value="3">3초</option><option value="10">10초</option></select></label>
+  <button type="button" id="drillStart" class="btn-primary">시작 / 다음 문제</button>
+  <button type="button" id="drillSpeak" class="btn-soft">마이크로 답하기</button>
+ </div>
+ <p id="drillCue" aria-live="polite">시작을 누르세요.</p>
+ <p id="drillTimer" aria-live="polite"></p>
+ <div class="field-row"><input id="drillAnswer" style="flex:1" placeholder="영어 문장을 말하거나 입력하세요"><button type="button" id="drillCheck">확인</button></div>
+ <p id="drillFeedback" aria-live="polite"></p>
+ <p id="drillStats"></p>
+ <button type="button" id="drillExport" class="btn-soft">학습 기록 내려받기</button>
+ <button type="button" id="drillReset" class="btn-danger-soft">훈련 기록 초기화</button>
+</section>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const KEY='wic_drill_v2';
+let stats={attempts:0,correct:0,late:0,records:[]};
+try{const old=JSON.parse(localStorage.getItem(KEY));if(old&&Array.isArray(old.records))stats=old;}catch(e){}
+const forms={
+help:['help','helped','helped','helping'],go:['go','went','gone','going'],
+make:['make','made','made','making'],take:['take','took','taken','taking'],
+work:['work','worked','worked','working']};
+const templates=[
+['Present','I {base} my friend.'],['Past','I {past} my friend yesterday.'],
+['Present continuous','I am {ing} my friend now.'],['Past continuous','I was {ing} my friend yesterday.'],
+['Present perfect','I have {pp} my friend.'],['Past perfect','I had {pp} my friend.'],
+['Future','I will {base} my friend tomorrow.'],['Future continuous','I will be {ing} my friend tomorrow.'],
+['Future perfect','I will have {pp} my friend by tomorrow.'],
+['Present perfect continuous','I have been {ing} my friend.'],
+['Past perfect continuous','I had been {ing} my friend.'],
+['Future perfect continuous','I will have been {ing} my friend.'],
+['Modal can','I can {base} my friend.'],['Modal should','I should {base} my friend.'],
+['Modal must','I must {base} my friend.'],['Negative present','I do not {base} my friend.'],
+['Negative past','I did not {base} my friend.'],['Question present','Do I {base} my friend?'],
+['Question past','Did I {base} my friend?'],['Question perfect','Have I {pp} my friend?'],
+['Infinitive','I want to {base} my friend.'],['Gerund','I like {ing} my friend.']
+];
+// Only help/work are transitive in all templates; for other verbs use a suitable object.
+const objects={help:'my friend',go:'to school',make:'dinner',take:'a break',work:'at home'};
+let current=null,deadline=0,ticker=null,previous=-1;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(stats));}catch(e){}}
+function render(){ $('drillStats').textContent='응답 '+stats.attempts+'회 · 정확 '+stats.correct+'회 · 시간 초과 '+stats.late+'회';}
+function norm(s){return s.toLowerCase().replace(/[^a-z ]/g,' ').replace(/\\s+/g,' ').trim().replace(/\\bdo not\\b/g,"don't").replace(/\\bdid not\\b/g,"didn't");}
+function build(t,v){const f=forms[v],obj=objects[v];return t.replaceAll('{base}',f[0]).replaceAll('{past}',f[1]).replaceAll('{pp}',f[2]).replaceAll('{ing}',f[3]).replaceAll('my friend',obj);}
+function speak(s){if(!('speechSynthesis'in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(s);u.lang='en-US';u.rate=.9;window.speechSynthesis.speak(u);}
+function next(){
+ clearInterval(ticker);let i=Math.floor(Math.random()*templates.length);if(i===previous)i=(i+1)%templates.length;previous=i;
+ const v=$('drillVerb').value;current={verb:v,type:templates[i][0],expected:build(templates[i][1],v)};
+ $('drillCue').textContent=v.toUpperCase()+' · '+current.type+' · I / '+objects[v];
+ $('drillAnswer').value='';$('drillFeedback').textContent='';
+ speak(v+'. '+current.type+'.');
+ deadline=Date.now()+Number($('drillLimit').value)*1000;
+ ticker=setInterval(()=>{$('drillTimer').textContent=Math.max(0,Math.ceil((deadline-Date.now())/1000))+'초';if(Date.now()>=deadline)clearInterval(ticker);},100);
+ $('drillAnswer').focus();
+}
+function check(){
+ if(!current)return;
+ clearInterval(ticker);const answer=$('drillAnswer').value.trim(),late=Date.now()>deadline;
+ const correct=norm(answer)===norm(current.expected);
+ stats.attempts++;if(correct)stats.correct++;if(late)stats.late++;
+ stats.records.push({at:new Date().toISOString(),verb:current.verb,type:current.type,answer,expected:current.expected,correct,late});
+ if(stats.records.length>2000)stats.records.shift();
+ save();render();
+ $('drillFeedback').textContent=(correct?'정확합니다. ':'다시 연습: ')+current.expected+(late?' · 제한시간 초과':'');
+ speak(current.expected);current=null;
+}
+$('drillStart').addEventListener('click',next);$('drillCheck').addEventListener('click',check);
+$('drillAnswer').addEventListener('keydown',e=>{if(e.key==='Enter')check();});
+$('drillSpeak').addEventListener('click',()=>{
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){$('drillFeedback').textContent='이 브라우저는 음성 인식을 지원하지 않습니다. 입력창을 사용하세요.';return;}
+ if(!current){$('drillFeedback').textContent='먼저 문제를 시작하세요.';return;}
+ const r=new SR();r.lang='en-US';r.interimResults=false;
+ r.onresult=e=>{$('drillAnswer').value=e.results[0][0].transcript;check();};
+ r.onerror=e=>{$('drillFeedback').textContent='음성 인식 실패: '+e.error;};r.start();
+});
+$('drillExport').addEventListener('click',()=>{
+ const blob=new Blob([JSON.stringify(stats,null,2)],{type:'application/json'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='english-drill-history.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+});
+$('drillReset').addEventListener('click',()=>{if(confirm('훈련 기록을 지울까요?')){stats={attempts:0,correct:0,late:0,records:[]};save();render();}});
+render();
+})();
+</script>
 </body>
 </html>
